@@ -1,0 +1,182 @@
+# ============================================================================
+# Base config (human run)
+# - Used by: python main.py
+# - Scope: human experiment only (no qa/sim section in this file)
+# ============================================================================
+
+# === Subject Form ===========================================================
+subinfo_fields:
+  - name: subject_id
+    type: int
+    constraints:
+      min: 101
+      max: 999
+      digits: 3
+  - name: subname
+    type: string
+  - name: age
+    type: int
+    constraints:
+      min: 5
+      max: 60
+  - name: gender
+    type: choice
+    choices:
+      - Male
+      - Female
+
+# === Subject Mapping ========================================================
+subinfo_mapping:
+  subject_id: 被试号
+  subname: 被试姓名(拼音)
+  age: 年龄
+  gender: 性别
+  Male: 男
+  Female: 女
+  registration_failed: 注册失败。
+  registration_successful: 注册成功！
+  invalid_input: "字段 {field} 输入无效"
+
+# === Display / Window =======================================================
+window:
+  size:
+    - 1920
+    - 1080
+  units: deg
+  screen: 0
+  bg_color: gray
+  fullscreen: true
+  fullscreen_lock_escape: true
+  monitor_width_cm: 60
+  monitor_distance_cm: 72
+
+# === Task ===================================================================
+task:
+  task_name: eeg_nback_preview
+  language: Chinese
+  voice_name: zh-CN-YunyangNeural
+  voice_enabled: true
+  total_blocks: 2
+  total_trials: 24
+  trial_per_block: 12
+  conditions:
+    - match
+    - nomatch
+  key_list:
+    - space
+    - up
+  match_key: space
+  nomatch_key: up
+  delta: 0.0
+  seed_mode: same_across_sub
+  overall_seed: 2025
+  input_mode: keyboard
+  hide_cursor: true
+  force_quit_enabled: true
+  force_quit_shortcut: ctrl+q
+
+# === Stimuli ================================================================
+stimuli:
+  stim_digit:
+    type: text
+    text: "*"
+    color: white
+
+  stim_iti:
+    type: text
+    text: ""
+    color: black
+
+  instruction_1back:
+    type: textbox
+    text: |
+      【1-back任务说明】
+
+      您将看到屏幕上依次呈现一串数字（1-9）。
+
+      任务要求是判断当前数字是否与前1个数字相同：
+
+      - 相同：按【空格键】
+      - 不同：按【上方向键】
+
+      请尽量快速并准确作答。
+      准备好后请按【空格键】开始任务。
+    font: SimHei
+    alignment: center
+    letterHeight: 0.78
+    color: white
+
+  instruction_2back:
+    type: textbox
+    text: |
+      【2-back任务说明】
+
+      您将看到屏幕上依次呈现一串数字（1-9）。
+
+      任务要求是判断当前数字是否与前2个数字相同：
+
+      - 相同：按【空格键】
+      - 不同：按【上方向键】
+
+      请尽量快速并准确作答。
+      准备好后请按【空格键】开始任务。
+    font: SimHei
+    alignment: center
+    letterHeight: 0.78
+    color: white
+
+  block_break:
+    type: text
+    text: |
+      第 {block_num}/{total_blocks} 部分完成
+      匹配试次正确率：{acc}
+
+      休息一下，按【空格键】继续
+    color: white
+    height: 0.78
+
+  good_bye:
+    type: textbox
+    text: |
+      【任务结束】
+
+      感谢您的参与！
+      请按【空格键】退出任务。
+    color: white
+    font: SimHei
+    alignment: center
+    letterHeight: 0.78
+
+# === Timing =================================================================
+timing:
+  probe_duration: 0.8
+  iti_duration: 1.2
+
+# === Triggers ===============================================================
+triggers:
+  map:
+    exp_onset: 98
+    exp_end: 99
+    block_onset: 100
+    block_end: 101
+    match_onset: 2
+    nomatch_onset: 3
+    key_press: 4
+    no_response: 5
+
+  driver:
+    type: serial_url
+    url: loop://
+    baudrate: 115200
+    timeout: 1
+    prefix:
+      - 1
+      - 225
+      - 1
+      - 0
+
+  policy:
+    strict: false
+
+  timing:
+    post_delay_s: 0.001
