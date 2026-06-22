@@ -57,8 +57,8 @@ task:
   voice_name: zh-CN-YunyangNeural
   voice_enabled: true
   total_blocks: 2
-  total_trials: 24
-  trial_per_block: 12
+  total_trials: 40
+  trial_per_block: 20
   conditions:
     - match
     - nomatch
