@@ -1,17 +1,7 @@
-import type { ReducedTrialRow } from "psyflow-web";
+import { PythonRandom, type ReducedTrialRow } from "psyflow-web";
 
-function makeSeededRandom(seed: number): () => number {
-  let value = seed >>> 0;
-  return () => {
-    value = (value + 0x6d2b79f5) >>> 0;
-    let t = Math.imul(value ^ (value >>> 15), 1 | value);
-    t ^= t + Math.imul(t ^ (t >>> 7), 61 | t);
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
-
-function pickOne<T>(items: T[], rand: () => number): T {
-  const index = Math.floor(rand() * items.length);
+function pickOne<T>(items: T[], rng: PythonRandom): T {
+  const index = rng.randBelow(items.length);
   return items[Math.max(0, Math.min(items.length - 1, index))] as T;
 }
 
@@ -34,7 +24,7 @@ export function generate_nback_conditions(
   const match_ratio = Number(options.match_ratio ?? 0.3);
   const min_nonmatch_start = Number(options.min_nonmatch_start ?? 3);
   const max_match_run = Number(options.max_match_run ?? 3);
-  const rand = makeSeededRandom(Number(seed));
+  const rng = new PythonRandom(Number(seed));
 
   const trial_list: string[] = [];
   const digit_buffer: string[] = [];
@@ -46,22 +36,22 @@ export function generate_nback_conditions(
     let digit = "";
     let label = "";
     if (i < Math.max(nBack, min_nonmatch_start)) {
-      digit = pickOne(digits, rand);
+      digit = pickOne(digits, rng);
       while (digit_buffer.length >= nBack && digit === digit_buffer[digit_buffer.length - nBack]) {
-        digit = pickOne(digits, rand);
+        digit = pickOne(digits, rng);
       }
       label = `${no_match_label}_${digit}`;
       match_streak = 0;
     } else {
-      const canMatch = rand() < match_ratio && match_streak < max_match_run;
+      const canMatch = rng.random() < match_ratio && match_streak < max_match_run;
       if (canMatch) {
-        digit = digit_buffer[digit_buffer.length - nBack] ?? pickOne(digits, rand);
+        digit = digit_buffer[digit_buffer.length - nBack] ?? pickOne(digits, rng);
         label = `${match_label}_${digit}`;
         match_streak += 1;
       } else {
-        digit = pickOne(digits, rand);
+        digit = pickOne(digits, rng);
         while (digit === digit_buffer[digit_buffer.length - nBack]) {
-          digit = pickOne(digits, rand);
+          digit = pickOne(digits, rng);
         }
         label = `${no_match_label}_${digit}`;
         match_streak = 0;
